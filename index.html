@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text Voting Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      max-width: 800px;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 0.5em;
+      margin-top: 0.2em;
+      margin-bottom: 1em;
+    }
+    button {
+      padding: 0.7em 1.5em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 1em;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Vote on Text Versions</h2>
+  <form id="voteForm">
+    <label for="current">Current Text:</label><br>
+    <textarea id="current" name="current_text" rows="6" required></textarea><br>
+
+    <label for="proposed">Proposed Text:</label><br>
+    <textarea id="proposed" name="proposed_text" rows="6" required></textarea><br>
+
+    <label for="email">Your Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+
+    <button type="submit">Vote</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script>
+    const form = document.getElementById("voteForm");
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const data = {
+        current_text: document.getElementById("current").value,
+        proposed_text: document.getElementById("proposed").value,
+        email: document.getElementById("email").value
+      };
+
+      const response = await fetch("https://mentzersam.app.n8n.cloud/webhook/text-voting", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      const msg = document.getElementById("message");
+      if (response.ok) {
+        msg.textContent = "✅ Vote submitted successfully! Check your email soon.";
+        form.reset();
+      } else {
+        msg.textContent = "❌ Failed to submit vote. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>
